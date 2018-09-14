@@ -4,7 +4,7 @@ A "New tab" Chrome extension that communicates with your instance of Home Assist
 
 ## Getting started
 
-Save the extension files in a folder and enter navigate to "chrome://extensions" (URL) in Chrome. There you should find a button saying "Load unpacked extension". Click this button, navigate to the folder you created and click OK. After that's done, click the "Details" link next to the now activated extension, and click "Options". From the page that appears, enter your Home Assistant URL and http password and click save. The only confirmation will be logged in the Javascript console, which you can see by pressing Ctrl+Shift+J.
+Save the extension files in a folder and navigate to "chrome://extensions" (URL) in Chrome. There you should find a button saying "Load unpacked extension". Click this button, navigate to the folder you created and click OK. After that's done, click the "Details" link next to the now activated extension, and click "Options". From the page that appears, enter your Home Assistant URL and http password and click save. The only confirmation will be logged in the Javascript console, which you can see by pressing Ctrl+Shift+J.
 
 Before proceeding, copy your extension ID (you can find it in chrome://extensions). Now, in your configuration.yaml file, you need the following (replace "<EXTENSION_ID>" with the actual ID):
 
