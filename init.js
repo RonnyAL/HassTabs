@@ -33,6 +33,13 @@ chrome.storage.sync.get(['hassUrl', 'hassPass'], function(result) {
                 return $(x).text() > $(y).text() ? 1 : -1;
             }));
             select.get(0).selectedIndex = 0;
+
+            select.change(function() {
+                $("#ul_services").text("");
+                for (let i in services[$(this).val()].services) {
+                    $("#ul_services").append("<li>" + i + "</ul>");
+                }
+            });
         });
     }
 });
