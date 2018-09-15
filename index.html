@@ -5,23 +5,43 @@
   src="https://code.jquery.com/jquery-3.3.1.min.js"
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
   crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+
+<div id="userContent">
+
+</div>
+
 <div>
+    <i id="i_settings" class="material-icons">menu</i>
 
- <h1>Entities</h1>
- <form action="">
-  <select name="select_components" id="select_components"></select>
- </form>
+    <div id="sideMenu" data-hidden="true">
+        <button class="collapsible">Entities</button>
+        <div class="content">
+            <form action="">
+                <select name="select_components" id="select_components"></select>
+            </form>
+        </div>
+        <button class="collapsible">Services</button>
+        <div class="content">
+            <form action="">
+                <select name="select_services" id="select_services"></select>
+            </form>
+        </div>
+        <div id="sideMenuFooter">
+            <div id="sideMenuFooterLinks">
+                <a href="https://github.com/RonnyAL/HassTabs">GitHub</a>
+                <a id="extSettings" href="options.html">Extension settings</a>
+            </div>
+        </div>
+    </div>
 
+ <h1>Selected entity:</h1>
  <p id="entity_header"></p>
  <p id="entity_info"></p>
 
- <h1>Services</h1>
- <form action="">
-  <select name="select_services" id="select_services"></select>
- </form>
-
+ <h1>Selected service:</h1>
 <ul id="ul_services"></ul>
 
 </div>
