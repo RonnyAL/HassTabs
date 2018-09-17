@@ -1,6 +1,24 @@
 var coll = document.getElementsByClassName("collapsible");
 var i;
 
+$(document).ready(function() {
+    console.log(localStorage);
+    $(".entity_state").each(function() {
+        console.log($(this).attr("id"));
+
+        let id = $(this).attr("id");
+
+        chrome.storage.sync.get([$(this).attr("id")].toString(), function(data) {
+            //console.log("Data: " + JSON.stringify(data));
+            console.log(data[id].top.slice(0,-2));
+            $("#" + id.replace(/\./g, "\\.")).parent().offset({ top: data[id].top.slice(0,-2), left: data[id].left.slice(0,-2)});
+        });
+    });
+});
+
+
+
+
 for (i = 0; i < coll.length; i++) {
     coll[i].addEventListener("click", function() {
         this.classList.toggle("active");
@@ -48,12 +66,18 @@ chrome.storage.sync.get(['hassUrl', 'hassPass'], function(result) {
 
         let hass = new HomeAssistant(hassUrl, hassPass);
 
-
         hass.getStates().then(function(states) {
+            console.log(states);
             let select = $("#select_components");
 
-            for (let i in states)
+            for (let i in states) {
+                let entity_id = states[i].entity_id.replace(/\./g, "\\.");
+
+                if ($("#" + entity_id).length !== 0) {
+                    $("#" + entity_id).text(states[i].state + (states[i].attributes.unit_of_measurement));
+                }
                 select.append("<option value=" + i + ">" + states[i].entity_id + "</option>");
+            }
 
             select.html(select.find('option').sort(function(x, y) {
                 return $(x).text() > $(y).text() ? 1 : -1;
@@ -61,12 +85,15 @@ chrome.storage.sync.get(['hassUrl', 'hassPass'], function(result) {
             select.get(0).selectedIndex = 0;
 
             select.change(function() {
+                console.log(states[$(this).val()].entity_id);
                 $("#entity_header").text(states[$(this).val()].attributes.friendly_name + ": " + (states[$(this).val()].state));
+
             });
 
         });
 
         hass.getServices().then(function(services) {
+            //console.log(services);
             let select = $("#select_services");
 
             for (let i in services)

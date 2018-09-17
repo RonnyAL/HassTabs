@@ -6,11 +6,12 @@
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
   crossorigin="anonymous"></script>
   <link rel="stylesheet" href="css/style.css">
+    <script src="js/draggable.js"></script>
 </head>
 <body>
 
 <div id="userContent">
-
+    <div class="draggable"><span class="entity_state" id="sensor.stue_temperature"></span></div>
 </div>
 
 <div>
@@ -36,13 +37,14 @@
             </div>
         </div>
     </div>
+<div class="hideForNow">
+     <h1>Selected entity:</h1>
+     <p id="entity_header"></p>
+     <p id="entity_info"></p>
 
- <h1>Selected entity:</h1>
- <p id="entity_header"></p>
- <p id="entity_info"></p>
-
- <h1>Selected service:</h1>
-<ul id="ul_services"></ul>
+     <h1>Selected service:</h1>
+    <ul id="ul_services"></ul>
+</div>
 
 </div>
 </body>
