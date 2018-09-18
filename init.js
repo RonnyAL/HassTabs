@@ -1,23 +1,26 @@
-var coll = document.getElementsByClassName("collapsible");
-var i;
-
 $(document).ready(function() {
-    console.log(localStorage);
-    $(".entity_state").each(function() {
-        console.log($(this).attr("id"));
 
-        let id = $(this).attr("id");
+    chrome.storage.sync.get({'userContent' : []}, function(data) {
+        let elements = data.userContent;
 
-        chrome.storage.sync.get([$(this).attr("id")].toString(), function(data) {
-            //console.log("Data: " + JSON.stringify(data));
-            console.log(data[id].top.slice(0,-2));
-            $("#" + id.replace(/\./g, "\\.")).parent().offset({ top: data[id].top.slice(0,-2), left: data[id].left.slice(0,-2)});
+        for (let i = 0; i < elements.length; i++) {
+            $("#userContent").append("<div class='draggable'>" + elements[i] +"</div>");
+            $(".draggable").drags();
+        }
+
+        $(".entity_state").each(function() {
+            let id = $(this).attr("id");
+            chrome.storage.sync.get([$(this).attr("id")].toString(), function(data) {
+                $("#" + escapeSelector(id)).parent().offset({ top: data[id].top.slice(0,-2), left: data[id].left.slice(0,-2)});
+            });
         });
+
     });
 });
 
 
-
+var coll = document.getElementsByClassName("collapsible");
+var i;
 
 for (i = 0; i < coll.length; i++) {
     coll[i].addEventListener("click", function() {
@@ -59,60 +62,138 @@ $("#settingsMenuCloseBtn").click(function() {
     closeNav();
 });
 
-chrome.storage.sync.get(['hassUrl', 'hassPass'], function(result) {
-    if (result !== undefined && result.hassUrl !== undefined && result.hassPass !== undefined) {
-        let hassUrl = result.hassUrl;
-        let hassPass = result.hassPass;
+$(document).ready(function() {
 
-        let hass = new HomeAssistant(hassUrl, hassPass);
+    chrome.storage.sync.get(['hassUrl', 'hassPass'], function (result) {
+        if (result !== undefined && result.hassUrl !== undefined && result.hassPass !== undefined) {
+            let hassUrl = result.hassUrl;
+            let hassPass = result.hassPass;
 
-        hass.getStates().then(function(states) {
-            console.log(states);
-            let select = $("#select_components");
+            let hass = new HomeAssistant(hassUrl, hassPass);
 
-            for (let i in states) {
-                let entity_id = states[i].entity_id.replace(/\./g, "\\.");
+            hass.getStates().then(function (states) {
+                let select = $("#select_components");
 
-                if ($("#" + entity_id).length !== 0) {
-                    $("#" + entity_id).text(states[i].state + (states[i].attributes.unit_of_measurement));
+                for (let i in states) {
+
+                    let entity_id = states[i].entity_id;
+
+                    if ($("#" + escapeSelector(entity_id)).length !== 0) {
+                        $("#" + escapeSelector(entity_id)).text(states[i].state /*+ (states[i].attributes.unit_of_measurement)*/);
+                        select.append("<option value='" + i + "' selected='selected'>" + states[i].entity_id + "</option>");
+                    } else {
+                        select.append("<option value=" + i + ">" + states[i].entity_id + "</option>");
+                    }
+
                 }
-                select.append("<option value=" + i + ">" + states[i].entity_id + "</option>");
-            }
 
-            select.html(select.find('option').sort(function(x, y) {
-                return $(x).text() > $(y).text() ? 1 : -1;
-            }));
-            select.get(0).selectedIndex = 0;
 
-            select.change(function() {
-                console.log(states[$(this).val()].entity_id);
-                $("#entity_header").text(states[$(this).val()].attributes.friendly_name + ": " + (states[$(this).val()].state));
+                select.html(select.find('option').sort(function (x, y) {
+                    return $(x).text() > $(y).text() ? 1 : -1;
+                }));
+
+
+                let domains = [];
+
+                select.find('option').each(function () {
+                    let option = this;
+                    let currentDomain = option.text.substr(0, option.text.indexOf('.'));
+
+                    if (!domains.includes(currentDomain)) {
+                        domains.push(currentDomain);
+                        select.append("<optgroup label='" + currentDomain + "'></optgroup>");
+                    }
+
+                    $(option).appendTo($("optgroup[label='" + currentDomain + "']"));
+
+                });
+
+                select.multiSelect({
+                    selectableOptgroup: false,
+                    selectableHeader: "<div class='custom-header'>Available entities</div>",
+                    selectionHeader: "<div class='custom-header'>Added entities</div>",
+                    afterSelect: function (values) {
+                        let selected = $("#select_components option[value='" + parseInt(values) + "']");
+                        let id = selected.prop("innerHTML");
+
+                        hass.getEntity(id).then(function (result) {
+                            if (result.entity_id !== undefined) {
+                                $("#userContent").append('<div class="draggable"><span class="entity_state" id="' + result.entity_id + '">' + result.state + '</span></div>');
+                                $("#" + escapeSelector(id)).parent().drags();
+                            }
+
+                            let outerHTML = $("#" + escapeSelector(id)).clone().empty().prop("outerHTML");
+
+                            chrome.storage.sync.get({'userContent': []}, function (data) {
+                                let userContent = data.userContent;
+                                userContent.push(outerHTML);
+
+                                let uniqueContent = [];
+                                uniqueContent.push(outerHTML);
+                                $.each(userContent, function (i, el) {
+                                    if ($.inArray(el, uniqueContent) === -1) uniqueContent.push(el);
+                                });
+                                userContent = uniqueContent;
+
+                                chrome.storage.sync.set({"userContent": userContent});
+                            });
+                        });
+                    },
+                    afterDeselect: function (values) {
+                        let deselected = $("#select_components option[value='" + parseInt(values) + "']");
+
+                        let id = deselected.prop("innerHTML");
+                        let outerHTML = $("#" + escapeSelector(id)).clone().empty().prop("outerHTML");
+
+
+                        chrome.storage.sync.get({'userContent': []}, function (data) {
+                            let userContent = data.userContent;
+                            userContent.push(outerHTML);
+
+
+                            userContent = userContent.filter(function (e) {
+                                return e !== outerHTML;
+                            });
+
+                            chrome.storage.sync.set({"userContent": userContent});
+                            $("#" + escapeSelector(id)).remove();
+
+                        });
+
+                    }
+                });
+
+                select.change(function () {
+
+                });
 
             });
 
-        });
+            hass.getServices().then(function (services) {
+                let select = $("#select_services");
 
-        hass.getServices().then(function(services) {
-            //console.log(services);
-            let select = $("#select_services");
+                for (let i in services)
+                    select.append("<option value=" + i + ">" + services[i].domain + "</option>");
 
-            for (let i in services)
-                select.append("<option value=" + i + ">" + services[i].domain + "</option>");
+                select.html(select.find('option').sort(function (x, y) {
+                    return $(x).text() > $(y).text() ? 1 : -1;
+                }));
+                select.get(0).selectedIndex = 0;
 
-            select.html(select.find('option').sort(function(x, y) {
-                return $(x).text() > $(y).text() ? 1 : -1;
-            }));
-            select.get(0).selectedIndex = 0;
-
-            select.change(function() {
-                $("#ul_services").text("");
-                for (let i in services[$(this).val()].services) {
-                    $("#ul_services").append("<li>" + i + "</ul>");
-                }
+                select.change(function () {
+                    $("#ul_services").text("");
+                    for (let i in services[$(this).val()].services) {
+                        $("#ul_services").append("<li>" + i + "</ul>");
+                    }
+                });
             });
-        });
-    }
+        }
+    });
 });
+
+function escapeSelector(s) {
+    return s.replace(/(:|\.|\[|\])/g, "\\$1");
+}
 
 
 

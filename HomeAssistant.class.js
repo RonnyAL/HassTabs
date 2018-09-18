@@ -9,6 +9,10 @@ class HomeAssistant {
         return this.getJson("/api/config");
     }
 
+    getEntity(entity_id) {
+        return this.getJson("/api/states/" + entity_id);
+    }
+
     getStates() {
         return this.getJson("/api/states");
     }

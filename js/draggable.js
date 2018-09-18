@@ -23,7 +23,7 @@ $( window ).resize(function() {
                 drg_w = $drag.outerWidth(),
                 pos_y = $drag.offset().top + drg_h - e.pageY,
                 pos_x = $drag.offset().left + drg_w - e.pageX;
-            $drag.css('z-index', 1000).parents().on("mousemove", function(e) {
+            $drag.css('z-index', 1).parents().on("mousemove", function(e) {
                 $('.dragging').offset({
                     top:e.pageY + pos_y - drg_h,
                     left:e.pageX + pos_x - drg_w
@@ -34,6 +34,7 @@ $( window ).resize(function() {
             });
             e.preventDefault(); // disable selection
         }).on("mouseup", function() {
+            console.log("UP");
 
             //console.log($(this).find(".entity_state").attr("id"));
             $(this).removeClass('dragging');
@@ -41,6 +42,8 @@ $( window ).resize(function() {
             let offsetArr = {top: "auto", left: "auto"};
             offsetArr.top = $(this).css("top");
             offsetArr.left = $(this).css("left");
+
+            console.log("OFFSET: " + offsetArr.top + ", " + offsetArr.left);
 
             chrome.storage.sync.set({
                 [$(this).find(".entity_state").attr("id")]: offsetArr
