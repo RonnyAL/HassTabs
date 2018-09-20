@@ -1,0 +1,175 @@
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+#userContent {
+    margin: 0;
+    padding: 0;
+}
+
+.dragging {
+    position: absolute;
+    z-index: 1;
+    background-color: #f1f1f1;
+    border: 1px solid #d3d3d3;
+    text-align: center;
+    padding: .2em .3em;
+    margin: 0;
+    cursor: move;
+    color: black !important;
+    user-select: none;
+}
+
+.draggable {
+    position: absolute;
+    z-index: 1;
+    text-align: center;
+    padding: .2em .3em;
+    margin: 0;
+    cursor: move;
+    color: white;
+    user-select: none;
+}
+
+
+.entity_state {
+    font-size: 2em;
+}
+
+.content > form {
+    background-color: black;
+    padding: 0 1em;
+    margin: 0;
+}
+
+select {
+    width: 100%;
+    background-color: black;
+    color: #ccc;
+    border: none;
+    height: 4em;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background-image: url("https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-692487.jpg");
+    overflow: hidden;
+}
+
+.collapsible {
+    background-color: rgba(255,255,255,.01);
+    color: white;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 1.5em;
+}
+.collapsible:not(:last-of-type) {
+    border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.active, .collapsible:hover {
+    background-color: rgba(255,255,255,.025);
+}
+
+.collapsible:after {
+    z-index: 4;
+    content: '\002B';
+    color: white;
+    font-weight: bold;
+    float: right;
+    margin-left: 5px;
+}
+
+.active:after {
+    content: "\2212";
+}
+
+.content {
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+    background-color: #f1f1f1;
+}
+
+#i_settings {
+    z-index: 3;
+    position: absolute;
+    top: .65em;
+    right: .45em;
+    color: rgba(255,255,255,.25);
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    transition:.5s;
+}
+
+#i_settings:hover {
+    color: white;
+    cursor: pointer;
+}
+
+/* The side navigation menu */
+#sideMenu {
+    height: 100%; /* 100% Full-height */
+    width: 0; /* 0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    z-index: 2; /* Stay on top */
+    top: 0; /* Stay at the top */
+    right: 0;
+    background-color: rgba(0,0,0,.9); /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 60px; /* Place content 60px from the top */
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+}
+
+/* The navigation menu links */
+#sideMenu button {
+    color: #818181;
+    transition: 0.3s;
+}
+
+/* When you mouse over the navigation links, change their color */
+#sideMenu button:hover {
+    color: #f1f1f1;
+}
+
+
+/* Position and style the close button (top right corner) */
+#settingsMenuCloseBtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+    cursor: pointer;
+}
+
+#sideMenuFooter {
+    position: fixed;
+    width: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    bottom: 1em;
+    right: 1em;
+}
+
+#sideMenuFooter a {
+    text-decoration: none;
+    color: #818181;
+    margin-left: 10px;
+    transition: color .2s;
+}
+
+#sideMenuFooter a:hover {
+    color: #f1f1f1;
+}
+
+#sideMenuFooterLinks {
+    float: right;
+}
+

@@ -1,0 +1,45 @@
+<html>
+<head>
+    <title>New tab</title>
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/HomeAssistant.js"></script>
+    <script src="js/draggable.js"></script>
+    <link href="css/multi-select.css" media="screen" rel="stylesheet" type="text/css">
+    <script src="js/jquery.multi-select.js" type="text/javascript"></script>
+    <script src='js/init.js' type="text/javascript"></script>
+</head>
+<body>
+
+<div id="userContent"></div>
+
+<div>
+    <i id="i_settings" class="material-icons">menu</i>
+
+    <div id="sideMenu" data-hidden="true">
+        <button class="collapsible">Entities</button>
+        <div class="content">
+            <form action="">
+                <select name="select_components" id="select_components"></select>
+            </form>
+        </div>
+        <button class="collapsible">Services</button>
+        <div class="content">
+            <form action="">
+                <select name="select_services" id="select_services"></select>
+            </form>
+        </div>
+        <div id="sideMenuFooter">
+            <div id="sideMenuFooterLinks">
+                <a href="https://github.com/RonnyAL/HassTabs">GitHub</a>
+                <a id="extSettings" href="options.html">Extension settings</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+

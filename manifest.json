@@ -1,0 +1,18 @@
+{
+  "name": "HassTabs",
+  "description": "Override the new tab page with an Home Assistant stuff!",
+  "version": "0.4",
+  "permissions": [
+        "http://*",
+		"https://*",
+        "storage"
+    ],
+  "content_security_policy": "script-src 'self' https://code.jquery.com/ https://ajax.googleapis.com/; object-src 'self'",
+  "incognito": "split",
+    "persistent": false,
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "options_page": "options.html",
+  "manifest_version": 2
+}
