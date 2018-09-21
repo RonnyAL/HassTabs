@@ -114,6 +114,19 @@ class HomeAssistant {
                                     }
                                 }
                             });
+                        },
+                        afterDeselect(values) {
+                            let deselected = $("#select_components option[value='" + parseInt(values) + "']");
+                            let id = deselected.prop("innerHTML");
+
+                            chrome.storage.sync.get({"entities": []}, function(data) {
+                                let entities = data.entities;
+                                entities = entities.filter(function (e) {
+                                    return e !== id;
+                                });
+                                chrome.storage.sync.set({"entities": entities});
+                                $("#" + escapeSelector(id)).remove();
+                            });
                         }
                     });
 

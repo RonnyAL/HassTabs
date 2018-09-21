@@ -8,6 +8,7 @@ $(document).ready(function() {
 
     chrome.storage.sync.get({'entities' : []}, function(data) {
         let elements = data.entities;
+        console.log(elements);
 
         for (let i = 0; i < elements.length; i++) {
             $("#userContent").append("<div class='draggable'><span class='entity_state' id='" + elements[i] +"'></span></div>");
