@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+@import url('https://fonts.googleapis.com/css?family=Lato');
 
 #userContent {
     margin: 0;
@@ -33,7 +33,8 @@
 
 .entity_state {
     font-size: 2em;
-    font-family: "Open Sans";
+    font-family: "Lato";
+    font-weight: lighter;
 }
 
 .highlight {

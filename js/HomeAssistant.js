@@ -106,6 +106,18 @@ class HomeAssistant {
                             $("#userContent").append('<div class="draggable"><span class="entity_state" id="' + id + '"></span></div>');
                             $("#" + escapeSelector(id)).parent().drags();
 
+
+                            // TODO: Dirty way of adding mouseenter/mouseleave functions. Needs cleanup.
+                            $("li.ms-elem-selection.ms-selected").mouseenter(function() {
+                                let id = $(this).find("span").text();
+                                $("#" + escapeSelector(id)).parent().addClass("highlight");
+                            });
+
+                            $("li.ms-elem-selection.ms-selected").mouseleave(function() {
+                                let id = $(this).find("span").text();
+                                $("#" + escapeSelector(id)).parent().removeClass("highlight");
+                            });
+
                             chrome.storage.local.get({'states': null}, function (data) {
                                 let states = JSON.parse(data.states);
                                 for (let i in states) {
@@ -125,7 +137,7 @@ class HomeAssistant {
                                     return e !== id;
                                 });
                                 chrome.storage.sync.set({"entities": entities});
-                                $("#" + escapeSelector(id)).remove();
+                                $("#" + escapeSelector(id)).fadeOut(200, function(){$(this).remove()});
                             });
                         }
                     });
