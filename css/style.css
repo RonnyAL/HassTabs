@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
 #userContent {
     margin: 0;
@@ -32,17 +33,24 @@
 
 .entity_state {
     font-size: 2em;
+    font-family: "Open Sans";
+}
+
+.highlight {
+    z-index: 100 !important;
+    color: black;
+    background: white;
 }
 
 .content > form {
-    background-color: black;
-    padding: 0 1em;
+    background-color: #222;
+    padding: 0 2em;
     margin: 0;
 }
 
 select {
     width: 100%;
-    background-color: black;
+    background-color: #222;
     color: #ccc;
     border: none;
     height: 4em;
@@ -51,13 +59,15 @@ select {
 }
 
 body {
-    background-image: url("https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-692487.jpg");
+    background-image: url("https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-656653.jpg");
+    background-size: cover;
+    background-color: #23182c;
     overflow: hidden;
 }
 
 .collapsible {
-    background-color: rgba(255,255,255,.01);
-    color: white;
+    background-color: transparent;
+    color: #555;
     cursor: pointer;
     padding: 18px;
     width: 100%;
@@ -65,22 +75,37 @@ body {
     text-align: left;
     outline: none;
     font-size: 1.5em;
+    transition: .3s color, .3s background-color;
 }
+
+.collapsible:hover {
+    color:white;
+}
+
 .collapsible:not(:last-of-type) {
     border-bottom: 1px solid rgba(255,255,255,.05);
 }
 
+.active {
+    color: #fff;
+}
+
 .active, .collapsible:hover {
-    background-color: rgba(255,255,255,.025);
+    background-color: #e74c3c;
 }
 
 .collapsible:after {
     z-index: 4;
     content: '\002B';
-    color: white;
+    color: #555;
     font-weight: bold;
     float: right;
     margin-left: 5px;
+    transition: color .3s;
+}
+
+.collapsible:hover:after, .collapsible.active:after {
+    color: white;
 }
 
 .active:after {
@@ -91,8 +116,12 @@ body {
     padding: 0;
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.2s ease-out;
-    background-color: #f1f1f1;
+    transition: max-height 0.2s ease-out, padding .3s;
+    background-color: #222;
+}
+
+.active .content {
+    padding: 2em 0;
 }
 
 #i_settings {
@@ -101,11 +130,7 @@ body {
     top: .65em;
     right: .45em;
     color: rgba(255,255,255,.25);
-    -o-transition:.5s;
-    -ms-transition:.5s;
-    -moz-transition:.5s;
-    -webkit-transition:.5s;
-    transition:.5s;
+    transition:.3s;
 }
 
 #i_settings:hover {
@@ -121,21 +146,10 @@ body {
     z-index: 2; /* Stay on top */
     top: 0; /* Stay at the top */
     right: 0;
-    background-color: rgba(0,0,0,.9); /* Black*/
+    background-color: #222222;
     overflow-x: hidden; /* Disable horizontal scroll */
     padding-top: 60px; /* Place content 60px from the top */
     transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
-}
-
-/* The navigation menu links */
-#sideMenu button {
-    color: #818181;
-    transition: 0.3s;
-}
-
-/* When you mouse over the navigation links, change their color */
-#sideMenu button:hover {
-    color: #f1f1f1;
 }
 
 

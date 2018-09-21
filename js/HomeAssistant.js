@@ -58,7 +58,7 @@ class HomeAssistant {
                             $("#" + escapeSelector(entity_id)).text(states[i].state /*+ (states[i].attributes.unit_of_measurement)*/);
                             select.append("<option value='" + i + "' selected='selected'>" + states[i].entity_id + "</option>");
                         } else {
-                            select.append("<option value=" + i + ">" + states[i].entity_id + "</option>");
+                            select.append("<option value='" + i + "'>" + states[i].entity_id + "</option>");
                         }
 
                     }
@@ -135,6 +135,17 @@ class HomeAssistant {
                 console.log(response.type);
                 console.log(response);
             }
+
+            $("li.ms-elem-selection.ms-selected").mouseenter(function() {
+               let id = $(this).find("span").text();
+               $("#" + escapeSelector(id)).parent().addClass("highlight");
+            });
+
+            $("li.ms-elem-selection.ms-selected").mouseleave(function() {
+                let id = $(this).find("span").text();
+                $("#" + escapeSelector(id)).parent().removeClass("highlight");
+            });
+
             function escapeSelector(s) {
                 return s.replace(/(:|\.|\[|\])/g, "\\$1");
             }

@@ -1,5 +1,9 @@
 $(document).ready(function() {
 
+    $("body").mouseup(function() {
+       $(".dragging").mouseup();
+    });
+
     chrome.storage.sync.get({'hassUrl': null, 'hassPass': null, 'hassAccessToken': null}, function (result) {
         let hass = new HomeAssistant(result.hassUrl, result.hassPass, result.hassAccessToken);
         hass.connect();
@@ -16,6 +20,7 @@ $(document).ready(function() {
         $(".draggable").drags();
 
         $(".entity_state").each(function() {
+
             let id = $(this).attr("id");
             chrome.storage.sync.get([$(this).attr("id")].toString(), function(data) {
                 $("#" + escapeSelector(id)).parent().offset({ top: data[id].top.slice(0,-2), left: data[id].left.slice(0,-2)});
@@ -33,8 +38,10 @@ $(document).ready(function() {
             var content = this.nextElementSibling;
             if (content.style.maxHeight){
                 content.style.maxHeight = null;
+                content.style.padding = null;
             } else {
                 content.style.maxHeight = content.scrollHeight + "px";
+                content.style.padding = "1em 0";
             }
         });
     }
