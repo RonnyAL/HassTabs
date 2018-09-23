@@ -1,9 +1,5 @@
-//Make the DIV element draggagle:
 $(document).ready(function() {
     $("body").css("max-width", $(window).width());
-    $(".draggable").each(function() {
-        $(this).drags();
-    });
 });
 
 $( window ).resize(function() {
@@ -15,10 +11,10 @@ $( window ).resize(function() {
 
         opt = $.extend({handle:"",cursor:"move"}, opt);
 
-        var $el = this;
+        let $el = this;
         return $el.css('cursor', opt.cursor).on("mousedown", function(e) {
-            var $drag = $(this).addClass('dragging');
-            var z_idx = $drag.css('z-index'),
+            let $drag = $(this).addClass('dragging');
+            let z_idx = $drag.css('z-index'),
                 drg_h = $drag.outerHeight(),
                 drg_w = $drag.outerWidth(),
                 pos_y = $drag.offset().top + drg_h - e.pageY,
@@ -35,20 +31,21 @@ $( window ).resize(function() {
             e.preventDefault(); // disable selection
         }).on("mouseup", function() {
             console.log("UP");
-
-            //console.log($(this).find(".entity_state").attr("id"));
             $(this).removeClass('dragging');
 
-            let offsetArr = {top: "auto", left: "auto"};
-            offsetArr.top = $(this).css("top");
-            offsetArr.left = $(this).css("left");
+            offset = $(this).offset();
+            let entityId = $(this).find(".entity_state").attr("id");
 
-            console.log("OFFSET: " + offsetArr.top + ", " + offsetArr.left);
+            console.log("WRITING OFFSET FOR " + entityId);
+            console.log(offset);
+            chrome.storage.sync.get({'userEntities': []}, function(data) {
+                let userEntities = data.userEntities;
+                userEntities[entityId].offset = offset;
+                chrome.storage.sync.set({"userEntities": userEntities});
+            });
 
-            chrome.storage.sync.set({
-                [$(this).find(".entity_state").attr("id")]: offsetArr
-            })
         });
 
     }
+
 })(jQuery);

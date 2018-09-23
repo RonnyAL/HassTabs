@@ -1,6 +1,27 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 @import url('https://fonts.googleapis.com/css?family=Lato');
 
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #222;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #e74c3c;
+
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #b30000;
+}
+
 #userContent {
     margin: 0;
     padding: 0;
@@ -10,7 +31,6 @@
     position: absolute;
     z-index: 1;
     background-color: #f1f1f1;
-    border: 1px solid #d3d3d3;
     text-align: center;
     padding: .2em .3em;
     margin: 0;
@@ -45,7 +65,6 @@
 
 .content > form {
     background-color: #222;
-    padding: 0 2em;
     margin: 0;
 }
 
@@ -114,7 +133,6 @@ body {
 }
 
 .content {
-    padding: 0;
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.2s ease-out, padding .3s;

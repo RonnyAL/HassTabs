@@ -3,19 +3,36 @@ class HomeAssistant {
         this._url = url.replace('https://','wss://').replace('http://','ws://') + "/api/websocket";
         this._pass = pass;
         this._accessToken = accessToken;
+
+        this._ws = new WebSocket(this._url);
+        this._id = 0;
+        this._getStatesId = null;
+        this.initialize();
     }
 
-    connect() {
-        let ws = new WebSocket(this._url);
+    id() {
+        this._id += 1;
+        return this._id;
+    }
+
+    getStates() {
+        let ws = this._ws;
+        let getStatesId = this.id();
+        this._getStatesId = getStatesId;
+        ws.send('{"id": ' + getStatesId + ', "type": "get_states"}');
+    }
+
+    initialize() {
+        let ws = this._ws;
         let accessToken = this._accessToken;
         let pass = this._pass;
+        let self = this;
 
         ws.onclose = function() {console.log('Socket closed');};
         ws.onopen = function() {console.log('Connected');};
         ws.onerror = function(event) {console.log(event);};
 
         ws.onmessage = function(event) {
-
             let response = JSON.parse(event.data);
             if (response.type === "auth_required") {
                 console.log("Authenticating...");
@@ -34,31 +51,53 @@ class HomeAssistant {
 
             } else if (response.type === "auth_ok") {
                 console.log("Authenticated!");
-                ws.send('{"id": 1, "type": "get_states"}');
-                ws.send('{"id": 2, "type": "subscribe_events", "event_type": "state_changed"}');
+                self.getStates();
+                ws.send('{"id": ' + self.id() +', "type": "subscribe_events", "event_type": "state_changed"}');
 
             } else if (response.type === "event") {
-                let data = response.event.data;
-                let entity_id = data.entity_id;
-                let new_state = data.new_state.state;
-                $("#" + escapeSelector(entity_id)).text(new_state);
+                chrome.storage.local.get({"allEntities": {}}, function(data) {
+                    let allEntities = data.allEntities;
+                    let entity_id = response.event.data.entity_id;
+                    let new_state = response.event.data.new_state;
+                    allEntities[entity_id] = new_state;
+                    chrome.storage.local.set({"allEntities": allEntities});
+                });
+
             } else if (response.type === "result") {
 
-                // TODO: This is a really stupid way to check if we're getting a response to get_states...
-                if (response.result !== null && response.result.length > 30) {
-                    console.log(response);
-                    chrome.storage.local.set({"states": JSON.stringify(response.result)});
-                    let states = response.result;
+                if (response.result !== null && response.id === self._getStatesId) {
+                    console.log("GOT entities");
+                    let allEntities = {};
+
+                    for (let i in response.result) {
+                        allEntities[response.result[i].entity_id] = response.result[i];
+                    }
+
+                    chrome.storage.local.set({"allEntities": allEntities});
+
+                    chrome.storage.sync.get({'userEntities': {}}, function(data) {
+                        let userEntities = data.userEntities;
+
+                        $.each(userEntities, function(id, entity) {
+                            let element = $("#" + escapeSelector(id));
+
+                            if (element.length === 1) {
+                                element.text(allEntities[id].state);
+                            }
+                        });
+                    });
+
+                    let entities = response.result;
                     let select = $("#select_components");
 
-                    for (let i in states) {
-                        let entity_id = states[i].entity_id;
+                    for (let i in entities) {
+                        let entity_id = entities[i].entity_id;
 
                         if ($("#" + escapeSelector(entity_id)).length !== 0) {
-                            $("#" + escapeSelector(entity_id)).text(states[i].state /*+ (states[i].attributes.unit_of_measurement)*/);
-                            select.append("<option value='" + i + "' selected='selected'>" + states[i].entity_id + "</option>");
+                            $("#" + escapeSelector(entity_id)).text(entities[i].state);
+                            select.append("<option value='" + i + "' selected>" + entities[i].entity_id + "</option>");
                         } else {
-                            select.append("<option value='" + i + "'>" + states[i].entity_id + "</option>");
+                            select.append("<option value='" + i + "'>" + entities[i].entity_id + "</option>");
                         }
 
                     }
@@ -82,81 +121,20 @@ class HomeAssistant {
 
                     });
 
-                    select.multiSelect({
-                        selectableOptgroup: false,
-                        selectableHeader: "<div class='custom-header'>Available entities</div>",
-                        selectionHeader: "<div class='custom-header'>Added entities</div>",
-                        afterSelect: function (values) {
-                            let selected = $("#select_components option[value='" + parseInt(values) + "']");
-                            let id = selected.prop("innerHTML");
-
-                            chrome.storage.sync.get({"entities": []}, function(data) {
-
-                                let entities = data.entities;
-                                let uniqueEntities = [];
-                                uniqueEntities.push(id);
-                                $.each(entities, function (i, el) {
-                                    if ($.inArray(el, uniqueEntities) === -1) uniqueEntities.push(el);
-                                });
-                                entities = uniqueEntities;
-                                chrome.storage.sync.set({"entities": entities});
-
-                            });
-
-                            $("#userContent").append('<div class="draggable"><span class="entity_state" id="' + id + '"></span></div>');
-                            $("#" + escapeSelector(id)).parent().drags();
-
-
-                            // TODO: Dirty way of adding mouseenter/mouseleave functions. Needs cleanup.
-                            $("li.ms-elem-selection.ms-selected").mouseenter(function() {
-                                let id = $(this).find("span").text();
-                                $("#" + escapeSelector(id)).parent().addClass("highlight");
-                            });
-
-                            $("li.ms-elem-selection.ms-selected").mouseleave(function() {
-                                let id = $(this).find("span").text();
-                                $("#" + escapeSelector(id)).parent().removeClass("highlight");
-                            });
-
-                            chrome.storage.local.get({'states': null}, function (data) {
-                                let states = JSON.parse(data.states);
-                                for (let i in states) {
-                                    if ($("#" + escapeSelector(states[i].entity_id)).length !== 0) {
-                                        $("#" + escapeSelector(states[i].entity_id)).text(states[i].state);
-                                    }
-                                }
-                            });
-                        },
-                        afterDeselect(values) {
-                            let deselected = $("#select_components option[value='" + parseInt(values) + "']");
-                            let id = deselected.prop("innerHTML");
-
-                            chrome.storage.sync.get({"entities": []}, function(data) {
-                                let entities = data.entities;
-                                entities = entities.filter(function (e) {
-                                    return e !== id;
-                                });
-                                chrome.storage.sync.set({"entities": entities});
-                                $("#" + escapeSelector(id)).fadeOut(200, function(){$(this).remove()});
-                            });
-                        }
+                    console.log("fselect");
+                    select.fSelect({
+                        placeholder: 'Select entities to display',
+                        numDisplayed: 2,
+                        overflowText: '{n} entities selected',
+                        noResultsText: 'No entities found',
+                        searchText: 'Search',
+                        showSearch: true,
                     });
-
                 }
             } else {
                 console.log(response.type);
                 console.log(response);
             }
-
-            $("li.ms-elem-selection.ms-selected").mouseenter(function() {
-               let id = $(this).find("span").text();
-               $("#" + escapeSelector(id)).parent().addClass("highlight");
-            });
-
-            $("li.ms-elem-selection.ms-selected").mouseleave(function() {
-                let id = $(this).find("span").text();
-                $("#" + escapeSelector(id)).parent().removeClass("highlight");
-            });
 
             function escapeSelector(s) {
                 return s.replace(/(:|\.|\[|\])/g, "\\$1");

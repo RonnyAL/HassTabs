@@ -11,6 +11,8 @@
     <link href="css/multi-select.css" media="screen" rel="stylesheet" type="text/css">
     <script src="js/jquery.multi-select.js" type="text/javascript"></script>
     <script src='js/init.js' type="text/javascript"></script>
+    <script src="js/fSelect.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="css/fSelect.css">
 </head>
 <body>
 
@@ -22,8 +24,9 @@
     <div id="sideMenu" data-hidden="true">
         <button class="collapsible">Entities</button>
         <div class="content">
-            <form action="">
-                <select name="select_components" id="select_components"></select>
+            <form>
+                <select id="select_components" multiple="multiple">
+                </select>
             </form>
         </div>
         <button class="collapsible">Services</button>

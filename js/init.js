@@ -1,33 +1,128 @@
+entity_id = undefined;
 $(document).ready(function() {
+
+
+
+    let hass;
+    chrome.storage.sync.get({'hassUrl': null, 'hassPass': null, 'hassAccessToken': null}, function (result) {
+        hass = new HomeAssistant(result.hassUrl, result.hassPass, result.hassAccessToken);
+    });
+
+    loadEntities();
+
+    function loadEntities() {
+        chrome.storage.sync.get({"userEntities": {}}, function(data) {
+            console.log("\n\nLoading entities...");
+            let userEntities = data.userEntities;
+
+
+            chrome.storage.local.get({"allEntities": {}}, function(data) {
+                let allEntities = data.allEntities;
+
+                $.each(userEntities, function(id, entity) {
+                    let element = $("#" + escapeSelector(id));
+                    console.log(id + ":");
+                    console.log(entity);
+
+                    if (element.length === 0) {
+                        $("#userContent").append("<div class='draggable'><span class='entity_state' id='" + id +"'>" + allEntities[id].state + "</span></div>");
+                        if (entity.hasOwnProperty("offset")) {
+                            console.log(entity.offset);
+                            $("#" + escapeSelector(id)).parent().offset(entity.offset);
+                        }
+                    }
+                });
+                $(".draggable").drags();
+            });
+        });
+    }
+
+
+    chrome.storage.onChanged.addListener(function(changes, namespace) {
+
+        for (let key in changes) {
+            if (namespace === "local" && key === "allEntities") {
+                chrome.storage.local.get({"allEntities": {}}, function(data) {
+                    let allEntities = data.allEntities;
+                    console.log("States updated");
+
+                    $.each($(".entity_state"), function() {
+                        $(this).text(allEntities[$(this).attr("id")].state);
+                    });
+
+                });
+            } else if (namespace === "sync" && key === "userEntities") {
+                loadEntities();
+            }
+        }
+    });
+
+
+    let sel = $("#select_components");
+    sel.data("prev",sel.val());
 
     $("body").mouseup(function() {
        $(".dragging").mouseup();
     });
 
-    chrome.storage.sync.get({'hassUrl': null, 'hassPass': null, 'hassAccessToken': null}, function (result) {
-        let hass = new HomeAssistant(result.hassUrl, result.hassPass, result.hassAccessToken);
-        hass.connect();
+   sel.change(function() {
+       let $this = $(this);
+       let prev = $this.data("prev");
+       let entities = [];
+
+       for (let i in prev) {
+           if ($this.val().indexOf(prev[i]) === -1) {
+               let id = sel.find(" option[value='" + prev[i] + "']").text();
+               entityRemoved(id);
+           }
+       }
+
+       let selected = $(this).val();
+       for (let i in selected) {
+           if (prev.indexOf(selected[i]) === -1) {
+               let id = $this.find(" option[value='" + selected[i] + "']").text();
+               entityAdded(id);
+           }
+       }
+
+       function entityAdded(id) {
+           console.log("Selected: " + id);
+
+           chrome.storage.sync.get({"userEntities": {}}, function(data) {
+               let userEntities = data.userEntities;
+
+               if (userEntities[id] === undefined) {
+                   userEntities[id] =
+                       {
+                           "offset": {"top": "auto", "left": "auto"},
+                       };
+                   chrome.storage.sync.set({"userEntities": userEntities});
+               }
+           });
+       }
+
+       function entityRemoved(id) {
+           console.log("Deselected: " + id);
+           let element = $("#" + escapeSelector(id));
+
+           element.parent().fadeOut(400, function() {
+               $(this).remove();
+               element = $("#" + escapeSelector(id));
+               console.log(element.length);
+               if (element.length === 0) {
+                   console.log("REMOVING " + id.toUpperCase());
+                   chrome.storage.sync.get({"userEntities": {}}, function(data) {
+                       let userEntities = data.userEntities;
+                       delete userEntities[id];
+                       chrome.storage.sync.set({"userEntities": userEntities});
+                   });
+               }
+           });
+       }
+       $this.data("prev", $this.val());
     });
 
 
-    chrome.storage.sync.get({'entities' : []}, function(data) {
-        let elements = data.entities;
-        console.log(elements);
-
-        for (let i = 0; i < elements.length; i++) {
-            $("#userContent").append("<div class='draggable'><span class='entity_state' id='" + elements[i] +"'></span></div>");
-        }
-        $(".draggable").drags();
-
-        $(".entity_state").each(function() {
-
-            let id = $(this).attr("id");
-            chrome.storage.sync.get([$(this).attr("id")].toString(), function(data) {
-                $("#" + escapeSelector(id)).parent().offset({ top: data[id].top.slice(0,-2), left: data[id].left.slice(0,-2)});
-            });
-        });
-
-    });
 
     var coll = document.getElementsByClassName("collapsible");
     var i;
@@ -40,7 +135,7 @@ $(document).ready(function() {
                 content.style.maxHeight = null;
                 content.style.padding = null;
             } else {
-                content.style.maxHeight = content.scrollHeight + "px";
+                content.style.maxHeight = content.scrollHeight + 900 + "px";
                 content.style.padding = "1em 0";
             }
         });
@@ -67,18 +162,11 @@ $(document).ready(function() {
             closeNav();
             $("#i_settings").html("menu");
         }
-        //chrome.tabs.create({url: "options.html"});
     });
 
     $("#settingsMenuCloseBtn").click(function() {
         closeNav();
     });
-
-});
-
-
-
-$(document).ready(function() {
 
 });
 
