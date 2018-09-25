@@ -21,13 +21,10 @@ $(document).ready(function() {
 
                 $.each(userEntities, function(id, entity) {
                     let element = $("#" + escapeSelector(id));
-                    console.log(id + ":");
-                    console.log(entity);
 
                     if (element.length === 0) {
                         $("#userContent").append("<div class='draggable'><span class='entity_state' id='" + id +"'>" + allEntities[id].state + "</span></div>");
                         if (entity.hasOwnProperty("offset")) {
-                            console.log(entity.offset);
                             $("#" + escapeSelector(id)).parent().offset(entity.offset);
                         }
                     }
@@ -44,7 +41,6 @@ $(document).ready(function() {
             if (namespace === "local" && key === "allEntities") {
                 chrome.storage.local.get({"allEntities": {}}, function(data) {
                     let allEntities = data.allEntities;
-                    console.log("States updated");
 
                     $.each($(".entity_state"), function() {
                         $(this).text(allEntities[$(this).attr("id")].state);
@@ -86,7 +82,6 @@ $(document).ready(function() {
        }
 
        function entityAdded(id) {
-           console.log("Selected: " + id);
 
            chrome.storage.sync.get({"userEntities": {}}, function(data) {
                let userEntities = data.userEntities;
@@ -102,21 +97,18 @@ $(document).ready(function() {
        }
 
        function entityRemoved(id) {
-           console.log("Deselected: " + id);
            let element = $("#" + escapeSelector(id));
 
            element.parent().fadeOut(400, function() {
                $(this).remove();
-               element = $("#" + escapeSelector(id));
-               console.log(element.length);
-               if (element.length === 0) {
-                   console.log("REMOVING " + id.toUpperCase());
-                   chrome.storage.sync.get({"userEntities": {}}, function(data) {
-                       let userEntities = data.userEntities;
-                       delete userEntities[id];
-                       chrome.storage.sync.set({"userEntities": userEntities});
-                   });
-               }
+           });
+
+           element.attr("id", "");
+
+           chrome.storage.sync.get({"userEntities": {}}, function(data) {
+               let userEntities = data.userEntities;
+               delete userEntities[id];
+               chrome.storage.sync.set({"userEntities": userEntities});
            });
        }
        $this.data("prev", $this.val());

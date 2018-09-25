@@ -11,8 +11,7 @@ class HomeAssistant {
     }
 
     id() {
-        this._id += 1;
-        return this._id;
+        return this._id += 1;
     }
 
     getStates() {
