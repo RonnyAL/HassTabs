@@ -16,7 +16,7 @@ http:
 
 When all of this is done, open a new tab and you should be able to see a list of entities and services from your instance of Home Assistant!
 
-![Screencap](https://i.imgur.com/vNJJPdv.gif)
+![Screencap](https://i.imgur.com/2pjeppy.gif)
 
 ## Known issues
 
