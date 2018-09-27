@@ -2,6 +2,10 @@
 
 A "New tab" Chrome extension that communicates with your instance of Home Assistant!
 
+## Updates
+
+This project is in active development. Visit the [changelog](CHANGELOG.md) to get an idea of what has recently changed.
+
 ## Getting started
 
 Save the extension files in a folder and navigate to "chrome://extensions" (URL) in Chrome. There you should find a button saying "Load unpacked extension". Click this button, navigate to the folder you created and click OK. After that's done, click the "Details" link next to the now activated extension, and click "Options". From the page that appears, enter your Home Assistant URL and http password and click save. The only confirmation will be logged in the Javascript console, which you can see by pressing Ctrl+Shift+J.
@@ -16,7 +20,7 @@ http:
 
 When all of this is done, open a new tab and you should be able to see a list of entities and services from your instance of Home Assistant!
 
-![Screencap](https://i.imgur.com/2pjeppy.gif)
+![Screencap](https://i.imgur.com/dqqLg3f.gif)
 
 ## Known issues
 
