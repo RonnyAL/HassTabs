@@ -22,11 +22,13 @@ $(document).ready(function() {
                 $.each(userEntities, function(id, entity) {
                     let element = $("#" + escapeSelector(id));
 
+
                     if (element.length === 0) {
                         $("#userContent").append("<div class='draggable'><span class='entity_state' id='" + id +"'>" + allEntities[id].state + "</span></div>");
                         if (entity.hasOwnProperty("offset")) {
                             $("#" + escapeSelector(id)).parent().offset(entity.offset);
                         }
+                        $("#" + escapeSelector(id)).parent().prepend("<p class='friendly_name'>" + allEntities[id].attributes.friendly_name + "</p>");
                     }
                 });
                 $(".draggable").drags();

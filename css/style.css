@@ -27,6 +27,13 @@
     padding: 0;
 }
 
+.friendly_name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 9.5em;
+}
+
 .dragging {
     position: absolute;
     z-index: 1;

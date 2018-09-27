@@ -23,14 +23,10 @@ $( window ).resize(function() {
                 $('.dragging').offset({
                     top:e.pageY + pos_y - drg_h,
                     left:e.pageX + pos_x - drg_w
-                }).on("mouseup", function() {
-                    //chrome.storage.sync.set({[$(this).id]: [$(this).offset()]});
-
-                });
+                })
             });
             e.preventDefault(); // disable selection
         }).on("mouseup", function() {
-            console.log("UP");
             $(this).removeClass('dragging');
 
             offset = $(this).offset();

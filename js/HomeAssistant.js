@@ -57,8 +57,8 @@ class HomeAssistant {
                 chrome.storage.local.get({"allEntities": {}}, function(data) {
                     let allEntities = data.allEntities;
                     let entity_id = response.event.data.entity_id;
-                    let new_state = response.event.data.new_state;
-                    allEntities[entity_id] = new_state;
+
+                    allEntities[entity_id] = response.event.data.new_state;
                     chrome.storage.local.set({"allEntities": allEntities});
                 });
 
@@ -130,7 +130,10 @@ class HomeAssistant {
                         showSearch: true,
                     });
                 }
-            } else {
+            } else if (response.type === "error") {
+                console.log("Error: ");
+                console.log(response);
+            }else {
                 console.log(response.type);
                 console.log(response);
             }
