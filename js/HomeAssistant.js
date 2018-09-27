@@ -78,7 +78,7 @@ class HomeAssistant {
                         let userEntities = data.userEntities;
 
                         $.each(userEntities, function(id, entity) {
-                            let element = $("#" + escapeSelector(id));
+                            let element = $("#" + escapeSelector(id)).find(".entity_state");
 
                             if (element.length === 1) {
                                 element.text(allEntities[id].state);
@@ -93,7 +93,7 @@ class HomeAssistant {
                         let entity_id = entities[i].entity_id;
 
                         if ($("#" + escapeSelector(entity_id)).length !== 0) {
-                            $("#" + escapeSelector(entity_id)).text(entities[i].state);
+                            $("#" + escapeSelector(entity_id)).find(".entity_state").text(entities[i].state);
                             select.append("<option value='" + i + "' selected>" + entities[i].entity_id + "</option>");
                         } else {
                             select.append("<option value='" + i + "'>" + entities[i].entity_id + "</option>");

@@ -24,19 +24,38 @@ $(document).ready(function() {
 
 
                     if (element.length === 0) {
-                        $("#userContent").append("<div class='draggable'><span class='entity_state' id='" + id +"'>" + allEntities[id].state + "</span></div>");
-                        $("#" + escapeSelector(id)).parent().prepend("<p class='friendly_name'>" + allEntities[id].attributes.friendly_name + "</p>");
+                        $("#userContent").append("<div class='draggable' id='" + id +"'><span class='entity_state'>" + allEntities[id].state + "</span></div>");
+                        $("#" + escapeSelector(id)).prepend("<p class='friendly_name'>" + allEntities[id].attributes.friendly_name + "</p>");
                     }
 
                     if (entity.hasOwnProperty("offset")) {
-                        $("#" + escapeSelector(id)).parent().offset(entity.offset);
+                        $("#" + escapeSelector(id)).offset(entity.offset);
                     }
                 });
-                $(".draggable").drags();
+                $(".draggable").draggable( {
+                    grid: [ 20, 20 ],
+                    containment: $("body"),
+                    scroll: false,
+
+                }).on("dragstart", function() {
+                    closeNav();
+                }).on("dragstop", function( event, ui ) {
+                    let offset = ui.offset;
+                    $(event.currentTarget).css('z-index', 1);
+                    let id = $(event.currentTarget).attr("id");
+
+                    console.log("WRITING OFFSET FOR " + id);
+                    console.log(offset);
+                    chrome.storage.sync.get({'userEntities': []}, function(data) {
+                        let userEntities = data.userEntities;
+                        userEntities[id].offset = offset;
+                        chrome.storage.sync.set({"userEntities": userEntities});
+                    });
+                })
+
             });
         });
     }
-
 
     chrome.storage.onChanged.addListener(function(changes, namespace) {
 
@@ -46,7 +65,7 @@ $(document).ready(function() {
                     let allEntities = data.allEntities;
 
                     $.each($(".entity_state"), function() {
-                        $(this).text(allEntities[$(this).attr("id")].state);
+                        $(this).text(allEntities[$(this).parent().attr("id")].state);
                     });
 
                 });
@@ -60,9 +79,6 @@ $(document).ready(function() {
     let sel = $("#select_components");
     sel.data("prev",sel.val());
 
-    $("body").mouseup(function() {
-       $(".dragging").mouseup();
-    });
 
    sel.change(function() {
        let $this = $(this);
@@ -102,7 +118,7 @@ $(document).ready(function() {
        function entityRemoved(id) {
            let element = $("#" + escapeSelector(id));
 
-           element.parent().fadeOut(400, function() {
+           element.fadeOut(400, function() {
                $(this).remove();
            });
 

@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-@import url('https://fonts.googleapis.com/css?family=Lato');
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+body {
+    margin: 0;
+    background-image: url("https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-197612.jpg");
+    background-size: auto;
+    overflow: hidden;
+}
 
 /* width */
 ::-webkit-scrollbar {
@@ -28,20 +35,24 @@
 }
 
 .friendly_name {
+    font-family: "Roboto", sans-serif;
+    font-size: 1em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 9.5em;
+    padding: 0;
+    margin: .5em 0;
 }
 
-.dragging {
+.draggable:active {
     position: absolute;
-    z-index: 1;
+    z-index: 4;
     background-color: #f1f1f1;
     text-align: center;
     padding: .2em .3em;
     margin: 0;
-    cursor: move;
+    cursor: grab;
     color: black !important;
     user-select: none;
 }
@@ -52,15 +63,14 @@
     text-align: center;
     padding: .2em .3em;
     margin: 0;
-    cursor: move;
+    cursor: grab;
     color: white;
     user-select: none;
 }
 
-
 .entity_state {
     font-size: 2em;
-    font-family: "Lato";
+    font-family: "Roboto", sans-serif;
     font-weight: lighter;
 }
 
@@ -83,13 +93,6 @@ select {
     height: 4em;
     padding: 0;
     margin: 0;
-}
-
-body {
-    background-image: url("https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-656653.jpg");
-    background-size: cover;
-    background-color: #23182c;
-    overflow: hidden;
 }
 
 .collapsible {
