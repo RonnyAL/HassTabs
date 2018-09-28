@@ -24,7 +24,7 @@ $(document).ready(function() {
 
 
                     if (element.length === 0) {
-                        $("#userContent").append("<div class='draggable' id='" + id +"'><span class='entity_state'>" + allEntities[id].state + "</span></div>");
+                        $("#userContent").append("<div title='Input help' class='draggable' id='" + id +"'><span class='entity_state'>" + allEntities[id].state + "</span></div>");
                         $("#" + escapeSelector(id)).prepend("<p class='friendly_name'>" + allEntities[id].attributes.friendly_name + "</p>");
                     }
 
@@ -51,7 +51,7 @@ $(document).ready(function() {
                         userEntities[id].offset = offset;
                         chrome.storage.sync.set({"userEntities": userEntities});
                     });
-                })
+                });
 
             });
         });
@@ -156,22 +156,22 @@ $(document).ready(function() {
     function openNav() {
         $("#sideMenu").width("35em");
         $("#sideMenu").data("hidden", false);
+        $("#i_settings").html("close");
     }
 
     /* Set the width of the side navigation to 0 */
     function closeNav() {
         $("#sideMenu").width(0);
         $("#sideMenu").data("hidden", true);
+        $("#i_settings").html("menu");
     }
 
     $("#i_settings").click(function() {
         let sideMenu = $("#sideMenu");
         if (sideMenu.data("hidden") === true) {
             openNav();
-            $("#i_settings").html("close");
         } else {
             closeNav();
-            $("#i_settings").html("menu");
         }
     });
 
