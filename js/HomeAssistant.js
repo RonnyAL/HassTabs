@@ -27,8 +27,19 @@ class HomeAssistant {
         let pass = this._pass;
         let self = this;
 
-        ws.onclose = function() {console.log('Socket closed');};
-        ws.onopen = function() {console.log('Connected');};
+        ws.onclose = function() {
+            $.toast({
+                heading: 'Error!',
+                text: 'No connection to Home Assistant: WebSocket was closed. <a id ="refresh_link" href="">Refresh</a> page to retry!',
+                showHideTransition: 'plain',
+                hideAfter: false,
+                icon: 'error'
+            });
+            console.log('Socket closed!');
+        };
+        ws.onopen = function() {console.log('Connected!');};
+        $("#refresh_link").click(function() {location.reload()});
+
         ws.onerror = function(event) {console.log(event);};
 
         ws.onmessage = function(event) {
@@ -65,7 +76,7 @@ class HomeAssistant {
             } else if (response.type === "result") {
 
                 if (response.result !== null && response.id === self._getStatesId) {
-                    console.log("GOT entities");
+                    console.log("All entities updated");
                     let allEntities = {};
 
                     for (let i in response.result) {
@@ -120,7 +131,6 @@ class HomeAssistant {
 
                     });
 
-                    console.log("fselect");
                     select.fSelect({
                         placeholder: 'Select entities to display',
                         numDisplayed: 2,
