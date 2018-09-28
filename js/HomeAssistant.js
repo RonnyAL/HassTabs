@@ -1,13 +1,27 @@
 class HomeAssistant {
     constructor(url = null, pass = null, accessToken = null) {
-        this._url = url.replace('https://','wss://').replace('http://','ws://') + "/api/websocket";
+        if (url !== null)
+            this._url = url.replace('https://','wss://').replace('http://','ws://') + "/api/websocket";
+
         this._pass = pass;
         this._accessToken = accessToken;
 
-        this._ws = new WebSocket(this._url);
-        this._id = 0;
-        this._getStatesId = null;
-        this.initialize();
+        if (pass !== null || accessToken !== null) {
+            this._ws = new WebSocket(this._url);
+            this._id = 0;
+            this._getStatesId = null;
+            this.initialize();
+        } else {
+            let urlSpecified = "";
+            if (url === null) urlSpecified += " and your Home Assistant URL";
+            $.toast({
+                heading: 'Missing config',
+                text: 'Please provide a long-lived access token (recommended) or API password' + urlSpecified + ' from the <a href="options.html">options page</a>.',
+                showHideTransition: 'plain',
+                hideAfter: false,
+                icon: 'error'
+            });
+        }
     }
 
     id() {

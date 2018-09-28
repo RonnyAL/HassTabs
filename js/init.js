@@ -1,7 +1,4 @@
-entity_id = undefined;
 $(document).ready(function() {
-
-
 
     let hass;
     chrome.storage.sync.get({'hassUrl': null, 'hassPass': null, 'hassAccessToken': null}, function (result) {
