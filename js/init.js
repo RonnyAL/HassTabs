@@ -22,15 +22,31 @@ $(document).ready(function() {
                 $.each(userEntities, function(id, entity) {
                     let element = $("#" + escapeSelector(id));
 
-
                     if (element.length === 0) {
-                        $("#userContent").append("<div title='Input help' class='draggable' id='" + id +"'><span class='entity_state'>" + allEntities[id].state + "</span></div>");
-                        $("#" + escapeSelector(id)).prepend("<p class='friendly_name'>" + allEntities[id].attributes.friendly_name + "</p>");
+                        if (allEntities.hasOwnProperty(id)) {
+                            let output = allEntities[id].state;
+                            if (allEntities[id].attributes.hasOwnProperty("unit_of_measurement")) {
+                                output += " " + allEntities[id].attributes.unit_of_measurement;
+                            }
+                            $("#userContent").append("<div class='draggable' id='" + id +"'><span class='entity_state'>" + output + "</span></div>");
+                            $("#" + escapeSelector(id)).prepend("<p class='friendly_name'>" + allEntities[id].attributes.friendly_name + "</p>");
+                        }
+
+                        if (entity.hasOwnProperty("offset")) {
+                            $("#" + escapeSelector(id)).offset(entity.offset);
+                        }
+                    } else {
+
+                        if (allEntities.hasOwnProperty(id)) {
+                            let output = allEntities[id].state;
+                            if (allEntities[id].attributes.hasOwnProperty("unit_of_measurement")) {
+                                output += " " + allEntities[id].attributes.unit_of_measurement;
+                            }
+                            $("#" + escapeSelector(id)).find(".entity_state").text(output);
+                        }
+
                     }
 
-                    if (entity.hasOwnProperty("offset")) {
-                        $("#" + escapeSelector(id)).offset(entity.offset);
-                    }
                 });
                 $(".draggable").draggable( {
                     grid: [ 20, 20 ],
@@ -61,14 +77,7 @@ $(document).ready(function() {
 
         for (let key in changes) {
             if (namespace === "local" && key === "allEntities") {
-                chrome.storage.local.get({"allEntities": {}}, function(data) {
-                    let allEntities = data.allEntities;
-
-                    $.each($(".entity_state"), function() {
-                        $(this).text(allEntities[$(this).parent().attr("id")].state);
-                    });
-
-                });
+                loadEntities();
             } else if (namespace === "sync" && key === "userEntities") {
                 loadEntities();
             }
