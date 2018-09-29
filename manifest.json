@@ -13,6 +13,13 @@
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
-  "options_page": "options.html",
+  "options_ui": {
+    "page": "options.html",
+    "chrome_style": true
+  },
+  "icons": { "16": "favicon/icon16.png",
+    "32": "favicon/icon32.png",
+    "48": "favicon/icon48.png",
+    "128": "favicon/icon128.png" },
   "manifest_version": 2
 }
